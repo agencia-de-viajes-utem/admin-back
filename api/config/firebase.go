@@ -11,21 +11,18 @@ import (
 	"google.golang.org/api/option"
 )
 
-var FirebaseApp *firebase.App
-var FirebaseAuthClient *auth.Client
-
-func InitFirebase() error {
+func InitFirebase() (*auth.Client, error) {
 	ctx := context.Background()
 
 	// Buscar el archivo de credenciales en el directorio actual
 	matchingPattern := "./gha-creds-*.json"
 	matches, err := filepath.Glob(matchingPattern)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if len(matches) == 0 {
-		return fmt.Errorf("No se encontraron archivos de credenciales para Firebase.")
+		return nil, fmt.Errorf("No se encontraron archivos de credenciales para Firebase.")
 	}
 
 	// Utilizar el primer archivo coincidente (puedes ajustar esto según tus necesidades)
@@ -35,22 +32,13 @@ func InitFirebase() error {
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	FirebaseApp = app
-	FirebaseAuthClient, err = app.Auth(ctx)
+	authClient, err := app.Auth(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
-}
-
-// GetFirebaseClient retorna el cliente de Firebase Authentication
-func GetFirebaseClient() (*auth.Client, error) {
-	if FirebaseAuthClient == nil {
-		return nil, fmt.Errorf("Firebase client not initialized")
-	}
-	return FirebaseAuthClient, nil
+	return authClient, nil
 }
