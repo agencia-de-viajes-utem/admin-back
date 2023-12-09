@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:admin-api
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: kong
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    acme.cert-manager.io/http01-edit-in-place: "true"
+spec: 
+  rules:
+  - host: admin-api.lumonidy.studio
+    http:
+      paths:
+      - backend:
+          service:
+            name: admin-api
+            port:
+              number: 80
+        pathType: Prefix
+        path: /
+  tls:
+  - hosts:
+    - admin-api.lumonidy.studio
+    secretName: admin-api-secret
