@@ -35,7 +35,7 @@ func main() {
 
 	// Configura CORS para permitir solicitudes desde el puerto 5173 y permitir el encabezado "Authorization"
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176"}
+	config.AllowOrigins = []string{"https://usuario-test.lumonidy.studio", "http://localhost:5174", "http://localhost:5175", "https://admin.lumonidy.studio"} // Agrega el puerto 5173 como origen permitido
 	config.AllowHeaders = []string{"Authorization", "Content-Type"}
 	r.Use(cors.New(config))
 
