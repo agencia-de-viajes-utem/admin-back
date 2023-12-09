@@ -1,6 +1,6 @@
 # golang-deployment.yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment 
 metadata:
   name: admin-api
 spec:
