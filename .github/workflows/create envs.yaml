@@ -1,0 +1,9 @@
+name: "Crear .envs seguros"
+
+on:
+  push:
+    branches: [ "feature" ]
+    - name: Create .env file
+      run: |
+        echo "${{ secrets.ENV_FILE }}" > .env
+      working-directory: ${{ github.workspace }}
