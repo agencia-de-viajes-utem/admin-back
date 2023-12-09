@@ -1,9 +1,9 @@
 package main
 
 import (
-	"backend-admin/app/config"
-	"backend-admin/app/routes"
-	"backend-admin/app/services"
+	"backend-admin/api/config"
+	"backend-admin/api/routes"
+	"backend-admin/api/services"
 	"fmt"
 	"log"
 

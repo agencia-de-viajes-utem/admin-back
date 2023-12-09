@@ -2,7 +2,7 @@
 package services
 
 import (
-	"backend-admin/app/models"
+	"backend-admin/api/models"
 	"errors"
 	"log"
 	"reflect"

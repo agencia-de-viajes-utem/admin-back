@@ -2,10 +2,10 @@
 package routes
 
 import (
-	"backend-admin/app/middleware"
-	"backend-admin/app/models"
-	"backend-admin/app/services"
-	"backend-admin/app/utils"
+	"backend-admin/api/middleware"
+	"backend-admin/api/models"
+	"backend-admin/api/services"
+	"backend-admin/api/utils"
 	"log"
 	"net/http"
 	"strconv"

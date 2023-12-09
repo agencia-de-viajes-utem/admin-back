@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"backend-admin/app/models" // Asegúrate de reemplazar esto con el path correcto a tu paquete de modelos
+	"backend-admin/api/models" // Asegúrate de reemplazar esto con el path correcto a tu paquete de modelos
 )
 
 func TransformarAPaqueteResumido(paquete models.Paquete) models.PaqueteResumido {

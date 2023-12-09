@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"backend-admin/app/middleware"
-	"backend-admin/app/services"
+	"backend-admin/api/middleware"
+	"backend-admin/api/services"
 	"log"
 	"net/http"
 	"strconv"
