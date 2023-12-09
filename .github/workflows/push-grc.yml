@@ -1,0 +1,85 @@
+name: Push image to Cloud Registry
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  GCP_VERBOSITY: warning
+  GCR_IMAGE: gcr-alpine
+
+
+jobs:
+  push-to-GCR:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.3.4
+
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v0
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY_PROD }}
+    
+    - name: Create .env file
+      run: |
+        echo "${{ secrets.ENV_FILE }}" > .env
+      working-directory: ${{ github.workspace }}
+
+    - name: install the gcloud cli
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_PROD }}
+        service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
+        install_components: 'gke-gcloud-auth-plugin'
+        export_default_credentials: true 
+
+    - name: Get gcloud version & info
+      run: |-
+        echo '--- gcloud version ---'
+        gcloud version
+        echo '--- gcloud info ---'
+        gcloud info --anonymize
+
+    - name: Configure Docker to use the gcloud command-line tool as a credential helper for authentication
+      run: |-
+        gcloud --quiet auth configure-docker
+
+    - name: Build the alpine-based docker image
+      run: |-
+        docker build . --file Dockerfile -t "gcr.io/${{ secrets.GCP_PROJECT_PROD }}/$GCR_IMAGE:$GITHUB_SHA"
+
+    - name: Push docker image to GCR
+      run: |-
+        docker push "gcr.io/${{ secrets.GCP_PROJECT_PROD }}/$GCR_IMAGE:$GITHUB_SHA"
+
+    - name: Describe pushed GCR image
+      run: |-
+        gcloud container images describe "gcr.io/${{ secrets.GCP_PROJECT_PROD }}/$GCR_IMAGE:$GITHUB_SHA" --verbosity=$GCP_VERBOSITY --project=${{ secrets.GCP_PROJECT_PROD }} --quiet
+        grep "digest: sha256:" <<< $(gcloud container images describe "gcr.io/${{ secrets.GCP_PROJECT_PROD }}/$GCR_IMAGE:$GITHUB_SHA" --verbosity=$GCP_VERBOSITY --project=${{ secrets.GCP_PROJECT_PROD }} --quiet)
+
+    - name: deploy to gke
+      env:
+        GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_PROD }}
+      run: |
+        gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_PROD }} --region ${{ secrets.GKE_ZONE_PROD }}
+        sed -i "s/GOOGLE_PROJECT/$GCP_PROJECT/g" deploy/k8s/ingress.yaml
+        kubectl apply -f deploy/k8s/ingress.yaml
+
+    - name: Debug kubectl configurations
+      run: kubectl config view
+
+    - name: Deploy
+      run: |
+        sed -i "s~{IMAGE_TAG}~${{ env.GCR_IMAGE }}~" deploy/k8s/deployment.yaml
+        sed -i "s~{GITHUB_SHA}~${{ github.sha }}~" deploy/k8s/deployment.yaml
+        cd deploy/k8s/
+        kubectl apply -f deployment.yaml
+
+    - name: Start Service
+      run: |-
+        cd deploy/k8s
+        kubectl apply -f service.yaml  # Aplicar la configuración del servicio

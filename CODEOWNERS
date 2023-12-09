@@ -1,0 +1,4 @@
+# Archivo CODEOWNERS
+# Este archivo especifica a los propietarios de código para las ramas en el repositorio.
+/main/          @ZkillerZJT @lukas_577 @moisesnks
+/staging/       @ZkillerZJT @lukas_577 @moisesnks
