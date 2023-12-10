@@ -1,0 +1,29 @@
+# golang-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: admin-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-api
+  template:
+    metadata:
+      labels:
+        app: admin-api
+    spec:
+      containers:
+      - name: admin-api
+        image: gcr.io/taller-isw-2023s2/gcr-alpine:{GITHUB_SHA}
+        ports:
+        - containerPort: 8081
+        resources:
+          # You must specify requests for CPU to autoscale
+          # based on CPU utilization
+          limits:
+            cpu: 50m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
