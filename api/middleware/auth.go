@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,7 @@ import (
 // Función para verificar si un usuario es administrador
 func isUserAdmin(token string) (bool, error) {
 	// Realiza una solicitud HTTP al backend "Usuarios" para obtener la información del usuario en formato JSON
-	url := "http://localhost:8080/user/info"
+	url := os.Getenv("USUARIO_URL") + "/user/info"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false, err
