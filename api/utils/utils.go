@@ -18,8 +18,11 @@ func TransformarAPaqueteResumido(paquete models.Paquete) models.PaqueteResumido 
 	if len(paquete.Habitaciones) > 0 && paquete.Habitaciones[0].Hotel != nil && paquete.Habitaciones[0].Hotel.ID != 0 {
 		paqueteResumido.Hotel = TransformarHotelResumido(paquete.Habitaciones[0].Hotel)
 	} else {
-		paqueteResumido.Hotel = nil // O nil, dependiendo de cómo quieras manejarlo
+		paqueteResumido.Hotel = nil
 	}
+
+	// Agregar la referencia a la aerolínea aquí
+	paqueteResumido.Aerolinea = TransformarAerolineaResumida(paquete.Aerolinea)
 
 	for _, habitacion := range paquete.Habitaciones {
 		habitacionResumida := TransformarHabitacionResumida(habitacion)
@@ -27,6 +30,17 @@ func TransformarAPaqueteResumido(paquete models.Paquete) models.PaqueteResumido 
 	}
 
 	return paqueteResumido
+}
+
+// TransformarAerolineaResumida convierte una Aerolinea en su versión resumida
+func TransformarAerolineaResumida(aerolinea models.Aerolinea) models.AerolineaResumida {
+	aerolineaResumida := models.AerolineaResumida{
+		ID:     aerolinea.ID,
+		Nombre: aerolinea.Nombre,
+		Imagen: aerolinea.Imagen,
+		// Puedes agregar más campos según tus necesidades
+	}
+	return aerolineaResumida
 }
 
 // TransformarAeropuertoResumido convierte un Aeropuerto en su versión resumida

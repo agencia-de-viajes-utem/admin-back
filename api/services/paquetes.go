@@ -17,7 +17,8 @@ func GetPaquetes(db *gorm.DB) ([]models.Paquete, error) {
 	result := db.Preload("AeropuertoOrigen.Ciudad.Pais").
 		Preload("AeropuertoDestino.Ciudad.Pais").
 		Preload("Habitaciones.Hotel.Ciudad.Pais").
-		Preload("Habitaciones.TipoHabitacion"). // Agregando Preload para TipoHabitacion
+		Preload("Habitaciones.TipoHabitacion").
+		Preload("Aerolinea").
 		Find(&paquetes)
 	if result.Error != nil {
 		return nil, result.Error
@@ -34,7 +35,8 @@ func GetPaqueteByID(db *gorm.DB, id int) (*models.Paquete, error) {
 	result := db.Preload("AeropuertoOrigen.Ciudad.Pais").
 		Preload("AeropuertoDestino.Ciudad.Pais").
 		Preload("Habitaciones.Hotel.Ciudad.Pais").
-		Preload("Habitaciones.TipoHabitacion"). // Agregando Preload para TipoHabitacion
+		Preload("Habitaciones.TipoHabitacion").
+		Preload("Aerolinea").
 		First(&paquete, "id = ?", id)
 
 	// Verifica si hay errores
@@ -107,7 +109,18 @@ func CreatePaquete(db *gorm.DB, nuevoPaquete models.Paquete) error {
 		return result.Error
 	}
 
-	log.Printf("Paquete creado correctamente: %s\n", nuevoPaquete.Nombre)
+	// A este punto, nuevoPaquete.ID debería estar establecido con el ID generado
+	for _, habitacionID := range nuevoPaquete.HabitacionIDs {
+		if err := db.Create(&models.PaqueteHabitacion{
+			IDPaquete:    nuevoPaquete.ID,
+			IDHabitacion: habitacionID,
+		}).Error; err != nil {
+			log.Printf("Error al crear la relación en paquetes_habitaciones: %v\n", err)
+			return err
+		}
+	}
+
+	log.Printf("Paquete creado correctamente: %s con ID: %d\n", nuevoPaquete.Nombre, nuevoPaquete.ID)
 	return nil
 }
 

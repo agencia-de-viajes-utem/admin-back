@@ -14,7 +14,7 @@ import (
 // Función para verificar si un usuario es administrador
 func isUserAdmin(token string) (bool, error) {
 	// Realiza una solicitud HTTP al backend "Usuarios" para obtener la información del usuario en formato JSON
-	url := os.Getenv("USUARIO_URL") + "/user/info"
+	url := os.Getenv("USUARIOS_URL") + "/user/info"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false, err

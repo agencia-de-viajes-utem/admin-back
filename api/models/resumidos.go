@@ -13,6 +13,14 @@ type PaqueteResumido struct {
 	Destino      AeropuertoResumido   `json:"Destino"`
 	Habitaciones []HabitacionResumida `json:"Habitaciones,omitempty"`
 	Hotel        *HotelResumido       `json:"Hotel,omitempty"`
+	Aerolinea    AerolineaResumida    `json:"Aerolinea"`
+}
+
+// AerolineaResumida representa una versión simplificada de una Aerolínea
+type AerolineaResumida struct {
+	ID     int    `json:"ID"`
+	Nombre string `json:"Nombre"`
+	Imagen string `json:"Imagen"`
 }
 
 // AeropuertoResumido representa una versión simplificada de un Aeropuerto
