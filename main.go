@@ -41,8 +41,8 @@ func main() {
 		"http://localhost:5174",
 		"http://localhost:5175",
 		"http://localhost:5176",
-		"https://usuario-test.lumonidy.studio",
-		"https://admin.lumonidy.studio",
+		"https://usuario.tisw.cl",
+		"https://admin.tisw.cl",
 	}
 	config.AllowHeaders = []string{"Authorization", "Content-Type"} // Permite los encabezados "Authorization" y "Content-Type"
 	r.Use(cors.New(config))
